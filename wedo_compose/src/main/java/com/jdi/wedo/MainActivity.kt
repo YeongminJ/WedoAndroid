@@ -39,8 +39,13 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import com.jdi.wedo.repository.LocalRepository
+import com.jdi.wedo.util.WedoViewModelFactory
 
 class MainActivity: ComponentActivity() {
+
+    lateinit var viewModel: WedoViewModel
 
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +78,12 @@ class MainActivity: ComponentActivity() {
                 }
             }
         }
+
+        //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
+        val repository = LocalRepository()
+        viewModel = ViewModelProvider(this, WedoViewModelFactory(repository))[WedoViewModel::class.java]
+
+        viewModel.initWedo()
     }
 }
 
