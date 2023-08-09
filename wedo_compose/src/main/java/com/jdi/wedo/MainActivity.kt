@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 
-@AndroidEntryPoint
 class MainActivity: ComponentActivity() {
 
     @ExperimentalMaterial3Api
