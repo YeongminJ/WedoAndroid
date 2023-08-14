@@ -4,5 +4,4 @@ import kotlin.random.Random
 
 class Extensions {
 
-
 }
