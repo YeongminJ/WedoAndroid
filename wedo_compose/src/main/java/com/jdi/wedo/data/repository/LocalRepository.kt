@@ -1,4 +1,4 @@
-package com.jdi.wedo.repository
+package com.jdi.wedo.data.repository
 
 class LocalRepository {
     var sample = ""

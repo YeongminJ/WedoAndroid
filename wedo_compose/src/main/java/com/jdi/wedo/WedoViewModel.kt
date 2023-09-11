@@ -1,18 +1,27 @@
 package com.jdi.wedo
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.jdi.wedo.data.Constants
 import com.jdi.wedo.data.Wedo
 import com.jdi.wedo.data.WedoGroup
-import com.jdi.wedo.repository.LocalRepository
+import com.jdi.wedo.data.repository.LocalRepository
 import com.jdi.wedo.util.Log
 import com.jdi.wedo.util.PreferenceUtils
 import com.jdi.wedo.util.Utils
-import kotlin.random.Random
 
+//TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(val repository: LocalRepository): ViewModel() {
+
+    private val _groups = MutableLiveData<List<WedoGroup>>()
+    val groups: LiveData<List<WedoGroup>> = _groups
+//    var groups = mutableStateListOf<WedoGroup>()
+//        private set
+
+//    val groups = _groups
 
     // 기본 그룹 ID
     val defaultUID: String = PreferenceUtils.getString(Constants.DEFAULT_UID, Utils.generateRandomAlphanumericString(16))
@@ -20,15 +29,18 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         //초기 저WedoViewModel장된 정보가 아무것도 없을 때?
         Log.w("Init Wedo : $defaultUID")
         Firebase.database.reference.apply {
+            val groupList = mutableListOf<WedoGroup>()
             //1. 기본 그룹을 가져옴
             child("groups").child(defaultUID).get().addOnSuccessListener {
-                val group = it.getValue(WedoGroup::class.java)
+                var group = it.getValue(WedoGroup::class.java)
 //                it.getValue()
                 Log.i("Success loaded : ${group.toString()}")
                 if (group == null) {
                     //Init
-                    firstInitWedo()
+                    group = firstInitWedo()
                 }
+                groupList.add(group)
+                _groups.value = groupList
             }.addOnFailureListener {
                 it.printStackTrace()
                 Log.w("Fail loaded")
@@ -39,18 +51,23 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         // 저장된 UID 기준으로 목록을 불러옴
     }
 
-    fun firstInitWedo() {
+    fun firstInitWedo(): WedoGroup {
         Log.i("firstInitWedo : $defaultUID")
+        val newGroup = WedoGroup(listOf(defaultUID), mutableListOf(Wedo("일정을 추가해보세용")), "할 일")
         Firebase.database.reference.apply {
-            val newGroup = WedoGroup(listOf(defaultUID), mutableListOf(Wedo("일정을 추가해보세용")), "할 일")
             child("groups").child(defaultUID).setValue(newGroup)
             PreferenceUtils.set(Constants.DEFAULT_UID, defaultUID)
         }
+        return newGroup
     }
 
     fun writeWedo() {
         Firebase.database.apply {
             val message = getReference("message")
         }
+    }
+
+    fun addWedo() {
+
     }
 }

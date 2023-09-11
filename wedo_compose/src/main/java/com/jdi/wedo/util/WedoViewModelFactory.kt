@@ -3,7 +3,7 @@ package com.jdi.wedo.util
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.jdi.wedo.WedoViewModel
-import com.jdi.wedo.repository.LocalRepository
+import com.jdi.wedo.data.repository.LocalRepository
 
 class WedoViewModelFactory(val repository: LocalRepository): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

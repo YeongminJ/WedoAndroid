@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
@@ -27,35 +28,38 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.jdi.wedo.repository.LocalRepository
+import com.jdi.wedo.data.Wedo
+import com.jdi.wedo.data.repository.LocalRepository
 import com.jdi.wedo.util.WedoViewModelFactory
 
 class MainActivity: ComponentActivity() {
 
     lateinit var viewModel: WedoViewModel
 
+//    val mutableItems = remember { mutableStateListOf<String>() }
+
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val mutableItems = remember { mutableStateListOf("AAAA","BBBB","CCCC") }
+            val groups = viewModel.groups.observeAsState()
+            Log.e("JDI", "groups: ${groups.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
                 TodoDialog(showDialog, addAction = {
-                    mutableItems.add(it)
+//                    mutableItems.add(it)
                 })
             }
             Scaffold(
@@ -71,10 +75,17 @@ class MainActivity: ComponentActivity() {
             ) { innerPadding->
 
                 LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                    /* ... */
-                    items(mutableItems.size) {
-                        TodoItem(mutableItems[it])
+                    // 0번째 그룹만 우선 처리
+                    groups.value?.let { groupItems ->
+                        Log.e("JDI", "groups222: ${groups.value?.size}")
+                        groupItems.getOrNull(0)?.let { wedos->
+                            items(wedos.wedos) {
+                                TodoItem(it)
+                            }
+                        }
                     }
+
+                    /* ... */
                 }
             }
         }
@@ -89,7 +100,7 @@ class MainActivity: ComponentActivity() {
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun TodoItem(itemStr: String) {
+fun TodoItem(wedo: Wedo) {
     Card(
         Modifier
             .fillMaxWidth()
@@ -98,7 +109,7 @@ fun TodoItem(itemStr: String) {
             )) {
         Box(contentAlignment = Alignment.Center) {
             Text(
-                itemStr,
+                wedo.todo,
                 modifier = Modifier.padding(10.dp),
                 fontSize = TextUnit(30f, TextUnitType.Sp)
             )
@@ -127,6 +138,7 @@ fun MainScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoDialog(showDialog: MutableState<Boolean>,addAction: (String)-> Unit) {
+    Modifier.padding()
     val textFieldString = remember { mutableStateOf("") }
     AlertDialog(onDismissRequest = {
     }, title = {
