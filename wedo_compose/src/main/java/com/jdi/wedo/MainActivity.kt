@@ -141,6 +141,7 @@ fun TodoDialog(showDialog: MutableState<Boolean>,addAction: (String)-> Unit) {
     Modifier.padding()
     val textFieldString = remember { mutableStateOf("") }
     AlertDialog(onDismissRequest = {
+       showDialog.value = false
     }, title = {
         Text(text = "할 일 추가")
     }, confirmButton = {
@@ -155,5 +156,5 @@ fun TodoDialog(showDialog: MutableState<Boolean>,addAction: (String)-> Unit) {
             Log.e("JDI", "onValue : $it")
             textFieldString.value = it
         })
-    })
+    }, properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true))
 }
