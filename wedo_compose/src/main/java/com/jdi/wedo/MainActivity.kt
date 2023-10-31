@@ -39,8 +39,11 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
 import com.jdi.wedo.data.Wedo
+import com.jdi.wedo.data.WedoGroup
 import com.jdi.wedo.data.repository.LocalRepository
 import com.jdi.wedo.util.WedoViewModelFactory
 
@@ -58,8 +61,12 @@ class MainActivity: ComponentActivity() {
             Log.e("JDI", "groups: ${groups.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
-                TodoDialog(showDialog, addAction = {
+                TodoDialog(showDialog, addAction = { text->
 //                    mutableItems.add(it)
+                    //TODO Group 셀렉션
+                    groups.value?.getOrNull(0)?.let { group->
+                        viewModel.addWedo(text, group.groupname)
+                    }
                 })
             }
             Scaffold(
@@ -80,7 +87,7 @@ class MainActivity: ComponentActivity() {
                         Log.e("JDI", "groups222: ${groups.value?.size}")
                         groupItems.getOrNull(0)?.let { wedos->
                             items(wedos.wedos) {
-                                TodoItem(it)
+                                TodoItem(it, wedos)
                             }
                         }
                     }
@@ -100,7 +107,7 @@ class MainActivity: ComponentActivity() {
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun TodoItem(wedo: Wedo) {
+fun TodoItem(wedo: Wedo, group: WedoGroup) {
     Card(
         Modifier
             .fillMaxWidth()
@@ -111,7 +118,11 @@ fun TodoItem(wedo: Wedo) {
             Text(
                 wedo.todo,
                 modifier = Modifier.padding(10.dp),
-                fontSize = TextUnit(30f, TextUnitType.Sp)
+                fontSize = 30.sp,
+            )
+            Text(
+                group.groupname,
+                color = Color.Red
             )
         }
     }
@@ -137,7 +148,7 @@ fun MainScreen() {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoDialog(showDialog: MutableState<Boolean>,addAction: (String)-> Unit) {
+fun TodoDialog(showDialog: MutableState<Boolean>, addAction: (String)-> Unit) {
     Modifier.padding()
     val textFieldString = remember { mutableStateOf("") }
     AlertDialog(onDismissRequest = {

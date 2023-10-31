@@ -67,7 +67,24 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         }
     }
 
-    fun addWedo() {
+    fun addWedo(text: String, groupName: String) {
+        getGroupByName(groupName)?.let {
+            it.wedos.toMutableList().add(Wedo(text))
+            Firebase.database.reference.apply {
+                child("groups").child(defaultUID).setValue(it)
+                PreferenceUtils.set(Constants.DEFAULT_UID, defaultUID)
+            }
+            //update
+            _groups.value = _groups.value?.toMutableList()
+        }
+    }
 
+    fun getGroupByName(groupName: String): WedoGroup? {
+        _groups.value?.forEachIndexed { index, wedoGroup ->
+            if (wedoGroup.groupname == groupName) {
+                return wedoGroup
+            }
+        }
+        return null
     }
 }
