@@ -83,9 +83,10 @@ class MainActivity: ComponentActivity() {
         val repository = LocalRepository()
         viewModel = ViewModelProvider(this, WedoViewModelFactory(repository))[WedoViewModel::class.java]
 
-        viewModel.initWedo()
+//        viewModel.initWedo()
     }
 }
+
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
@@ -115,7 +116,7 @@ fun MainScreen() {
     NavigationBar {
         navItems.forEachIndexed { index, item ->
             NavigationBarItem(
-                enabled = index == 0,   //TODO Enable and 화면전환
+//                enabled = index == 0,   //TODO Enable and 화면전환
                 icon = { Icon(navIcons.getOrElse(index) { Icons.Filled.Done }, contentDescription = item) },
                 label = { Text(item) },
                 selected = index == selectedIndex.value,

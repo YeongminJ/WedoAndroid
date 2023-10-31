@@ -1,8 +1,11 @@
 package com.jdi.wedo.repository
 
-class LocalRepository {
-    var sample = ""
-    init {
-        sample = "Hello"
-    }
+import androidx.room.Room
+import com.jdi.wedo.WedoApplication
+import com.jdi.wedo.data.Wedo
+
+interface LocalRepository {
+    fun getAll(): List<Wedo>
+    fun insertWedo(wedo: Wedo)
+    fun deleteWedo(wedo: Wedo)
 }
