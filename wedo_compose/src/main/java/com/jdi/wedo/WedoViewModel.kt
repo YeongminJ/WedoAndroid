@@ -24,7 +24,7 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
 //    val groups = _groups
 
     // 기본 그룹 ID
-    val defaultUID: String = PreferenceUtils.getString(Constants.DEFAULT_UID, Utils.generateRandomAlphanumericString(16))
+    val defaultUID: String = PreferenceUtils.getDefaultUid()
     fun initWedo() {
         //초기 저WedoViewModel장된 정보가 아무것도 없을 때?
         Log.w("Init Wedo : $defaultUID")

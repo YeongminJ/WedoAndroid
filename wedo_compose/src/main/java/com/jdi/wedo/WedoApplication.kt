@@ -2,6 +2,8 @@ package com.jdi.wedo
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
+import com.jdi.wedo.repository.LocalDatabase
 
 class WedoApplication: Application() {
 
@@ -9,14 +11,15 @@ class WedoApplication: Application() {
         instance = this
     }
 
+    var applicationContext: Context? = null
+    var db: LocalDatabase? = null
     companion object {
         lateinit var instance: WedoApplication
-        fun getContext() : Context {
-            return instance.applicationContext
-        }
     }
 
     override fun onCreate() {
         super.onCreate()
+        applicationContext = this
+        db = LocalDatabase.getInstance(this)
     }
 }
