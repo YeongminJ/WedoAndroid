@@ -77,9 +77,11 @@ dependencies {
 //    implementation "com.google.dagger:hilt-android:2.44"
 //    kapt "com.google.dagger:hilt-compiler:2.44"
 
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-database-ktx")
+//    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-firestore")
+
 
     def preference_version = "1.2.0"
     implementation "androidx.preference:preference-ktx:$preference_version"

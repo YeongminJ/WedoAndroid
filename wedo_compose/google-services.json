@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "52231897083",
-    "project_id": "we-do-53e36",
-    "storage_bucket": "we-do-53e36.appspot.com"
+    "project_number": "291777187918",
+    "project_id": "we-do-eeb57",
+    "storage_bucket": "we-do-eeb57.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:52231897083:android:f47120f2dce431b872955e",
+        "mobilesdk_app_id": "1:291777187918:android:675261defa5d98ff3f731f",
         "android_client_info": {
           "package_name": "com.jdi.wedo"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "52231897083-gb9falkt40llclnm9b5q76fqvefoagl6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAEQANstrsyiV814izGpVRzEyG-REETQss"
+          "current_key": "AIzaSyB8J-ky-s6gSmpxbB9Yjqolvz8XvklEWxw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "52231897083-gb9falkt40llclnm9b5q76fqvefoagl6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
