@@ -1,8 +1,8 @@
-package com.jdi.wedo.util
+package com.hostd.wedo.util
 
 import androidx.preference.PreferenceManager
-import com.jdi.wedo.WedoApplication
-import com.jdi.wedo.data.Constants
+import com.hostd.wedo.WedoApplication
+import com.hostd.wedo.data.Constants
 
 object PreferenceUtils {
     fun getDefaultUid(): String {
@@ -18,7 +18,7 @@ object PreferenceUtils {
         }
     }
     fun get(key: String, defaultValue: String = ""): String {
-        WedoApplication.instance.applicationContext.let { context->
+        WedoApplication.instance.appContext.let { context->
             return PreferenceManager.getDefaultSharedPreferences(context).getString(key, defaultValue) ?: defaultValue
         }
 
@@ -26,13 +26,13 @@ object PreferenceUtils {
     }
 
     fun set(key: String, str: String) {
-        WedoApplication.instance.applicationContext.let { context->
+        WedoApplication.instance.appContext.let { context->
             return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(key, str).apply()
         }
     }
 
     fun hasKey(key: String): Boolean {
-        WedoApplication.instance.applicationContext.let { context->
+        WedoApplication.instance.appContext.let { context->
             return PreferenceManager.getDefaultSharedPreferences(context).contains(key)
         }
         return false

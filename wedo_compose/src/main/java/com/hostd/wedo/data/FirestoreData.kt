@@ -1,7 +1,6 @@
-package com.jdi.wedo.data
+package com.hostd.wedo.data
 
-import com.jdi.wedo.util.PreferenceUtils
-import com.jdi.wedo.util.Utils
+import com.hostd.wedo.util.Utils
 
 
 data class WedoGroup(
@@ -25,7 +24,7 @@ data class Wedo(
 )
 
 data class User(
-    var uid: String,
+    var uid: String = "",
     var email: String = "",
-    var groups: List<String>
+    var groups: List<String> = emptyList()
 )

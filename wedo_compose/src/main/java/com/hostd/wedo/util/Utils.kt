@@ -1,4 +1,4 @@
-package com.jdi.wedo.util
+package com.hostd.wedo.util
 
 import kotlin.random.Random
 

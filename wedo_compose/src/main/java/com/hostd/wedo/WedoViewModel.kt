@@ -1,20 +1,21 @@
-package com.jdi.wedo
+package com.hostd.wedo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
-import com.jdi.wedo.data.Constants.GROUPS
-import com.jdi.wedo.data.Constants.USERS
-import com.jdi.wedo.data.User
-import com.jdi.wedo.data.WedoGroup
-import com.jdi.wedo.data.repository.LocalRepository
-import com.jdi.wedo.util.Log
-import com.jdi.wedo.util.PreferenceUtils
+import com.hostd.wedo.data.Constants.GROUPS
+import com.hostd.wedo.data.Constants.USERS
+import com.hostd.wedo.data.User
+import com.hostd.wedo.data.WedoGroup
+//import com.hostd.wedo.data.repository.LocalRepository
+import com.hostd.wedo.util.Log
+import com.hostd.wedo.util.PreferenceUtils
 
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
-class WedoViewModel(val repository: LocalRepository): ViewModel() {
+class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
     private val _groups = MutableLiveData<List<WedoGroup>>()
     val groups: LiveData<List<WedoGroup>> = _groups
@@ -37,12 +38,17 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         //1. uuid 정보로 내 그룹 목록 가져오기
         db.collection(USERS).apply {
             document(defaultUID).get().addOnCompleteListener { task->
-                val user = task.result.toObject(User::class.java)
-                if (user == null) {
-                    firstInitWedo()
-                }
-                else {
-                    //TODO 이 경우는 로그인 구현되고 나서의 일인듯
+                if (task.isSuccessful) {
+                    task.result.data?.keys?.forEach {
+                        Log.i("key : $it")
+                    }
+                    val user = task.result.toObject(User::class.java)
+                    if (user == null) {
+                        firstInitWedo()
+                    }
+                    else {
+                        //TODO 이 경우는 로그인 구현되고 나서의 일인듯
+                    }
                 }
             }
         }
@@ -53,7 +59,7 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         //1. group 먼저 만들기
         val groupUid = WedoGroup.getGeneratorGroup()
         db.collection(GROUPS).also { gc->
-            WedoGroup(groupUid).also { group->
+            WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
             }
@@ -64,13 +70,7 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
         }
     }
 
-    /*fun writeWedo() {
-        Firebase.database.apply {
-            val message = getReference("message")
-        }
-    }
-
-    fun addWedo(text: String, groupName: String) {
+    fun addWedo(text: String, gUid: String) {
         getGroupByName(groupName)?.let {
             it.wedos.toMutableList().add(Wedo(text))
             Firebase.database.reference.apply {
@@ -79,6 +79,11 @@ class WedoViewModel(val repository: LocalRepository): ViewModel() {
             }
             //update
             _groups.value = _groups.value?.toMutableList()
+        }
+    }
+    /*fun writeWedo() {
+        Firebase.database.apply {
+            val message = getReference("message")
         }
     }
 

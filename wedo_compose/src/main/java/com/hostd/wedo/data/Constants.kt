@@ -1,4 +1,4 @@
-package com.jdi.wedo.data
+package com.hostd.wedo.data
 
 object Constants {
     val USERS = "users"

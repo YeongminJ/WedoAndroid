@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "291777187918",
-    "project_id": "we-do-eeb57",
-    "storage_bucket": "we-do-eeb57.appspot.com"
+    "project_number": "118928458261",
+    "project_id": "hoho-studio",
+    "storage_bucket": "hoho-studio.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:291777187918:android:675261defa5d98ff3f731f",
+        "mobilesdk_app_id": "1:118928458261:android:297cace27a6f746562041c",
         "android_client_info": {
-          "package_name": "com.jdi.wedo"
+          "package_name": "com.hostd.wedo"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB8J-ky-s6gSmpxbB9Yjqolvz8XvklEWxw"
+          "current_key": "AIzaSyCvvfb3RI2Zp2xbjeh3CE5BQCr_Qdn2yL4"
         }
       ],
       "services": {

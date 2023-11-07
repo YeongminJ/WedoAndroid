@@ -1,4 +1,4 @@
-package com.jdi.wedo
+package com.hostd.wedo
 
 import org.junit.Test
 

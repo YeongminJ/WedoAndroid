@@ -1,8 +1,7 @@
-package com.jdi.wedo
+package com.hostd.wedo
 
 import android.app.Application
 import android.content.Context
-import com.jdi.wedo.repository.LocalDatabase
 
 class WedoApplication: Application() {
 
@@ -10,13 +9,13 @@ class WedoApplication: Application() {
         instance = this
     }
 
-    lateinit var applicationContext: Context
+    lateinit var appContext: Context
     companion object {
         lateinit var instance: WedoApplication
     }
 
     override fun onCreate() {
         super.onCreate()
-        applicationContext = this
+        appContext = this
     }
 }

@@ -1,14 +1,14 @@
-package com.jdi.wedo.util
+package com.hostd.wedo.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.jdi.wedo.WedoViewModel
-import com.jdi.wedo.data.repository.LocalRepository
+import com.hostd.wedo.WedoViewModel
+//import com.hostd.wedo.data.repository.LocalRepository
 
-class WedoViewModelFactory(val repository: LocalRepository): ViewModelProvider.Factory {
+class WedoViewModelFactory(/*val repository: LocalRepository*/): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(WedoViewModel::class.java)) {
-            WedoViewModel(repository) as T
+            WedoViewModel(/*repository*/) as T
         } else {
             throw IllegalArgumentException()
         }

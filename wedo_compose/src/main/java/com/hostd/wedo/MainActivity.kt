@@ -1,4 +1,4 @@
-package com.jdi.wedo
+package com.hostd.wedo
 
 import android.os.Bundle
 import android.util.Log
@@ -36,16 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
-import com.jdi.wedo.data.Wedo
-import com.jdi.wedo.data.WedoGroup
-import com.jdi.wedo.data.repository.LocalRepository
-import com.jdi.wedo.util.WedoViewModelFactory
+import com.hostd.wedo.data.Wedo
+import com.hostd.wedo.data.WedoGroup
+import com.hostd.wedo.util.WedoViewModelFactory
 
 class MainActivity: ComponentActivity() {
 
@@ -98,8 +95,8 @@ class MainActivity: ComponentActivity() {
         }
 
         //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
-        val repository = LocalRepository()
-        viewModel = ViewModelProvider(this, WedoViewModelFactory(repository))[WedoViewModel::class.java]
+//        val repository = LocalRepositoryImpl()
+        viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
 
 //        viewModel.initWedo()
     }
