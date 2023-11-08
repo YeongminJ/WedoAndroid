@@ -1,7 +1,6 @@
 package com.hostd.wedo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
@@ -42,6 +41,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
 import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.data.WedoGroup
+import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.WedoViewModelFactory
 
 class MainActivity: ComponentActivity() {
@@ -62,7 +62,9 @@ class MainActivity: ComponentActivity() {
 //                    mutableItems.add(it)
                     //TODO Group 셀렉션
                     groups.value?.getOrNull(0)?.let { group->
-                        viewModel.addWedo(text, group.groupname)
+                        viewModel.addWedo(text, group.groupId)
+                    } ?: kotlin.run {
+                        Log.w("group is null")
                     }
                 })
             }

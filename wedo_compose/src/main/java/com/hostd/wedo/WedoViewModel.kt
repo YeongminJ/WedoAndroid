@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import com.hostd.wedo.data.Constants.GROUPS
 import com.hostd.wedo.data.Constants.USERS
 import com.hostd.wedo.data.User
+import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.data.WedoGroup
 //import com.hostd.wedo.data.repository.LocalRepository
 import com.hostd.wedo.util.Log
@@ -17,8 +18,8 @@ import com.hostd.wedo.util.PreferenceUtils
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
-    private val _groups = MutableLiveData<List<WedoGroup>>()
-    val groups: LiveData<List<WedoGroup>> = _groups
+    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData()
+    val groups: LiveData<MutableList<WedoGroup>> = _groups
 //    var groups = mutableStateListOf<WedoGroup>()
 //        private set
 
@@ -39,15 +40,26 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
         db.collection(USERS).apply {
             document(defaultUID).get().addOnCompleteListener { task->
                 if (task.isSuccessful) {
-                    task.result.data?.keys?.forEach {
-                        Log.i("key : $it")
-                    }
                     val user = task.result.toObject(User::class.java)
                     if (user == null) {
                         firstInitWedo()
                     }
                     else {
-                        //TODO 이 경우는 로그인 구현되고 나서의 일인듯
+                        //group 초기화
+                        user.groups.forEach {
+                            db.collection(GROUPS).document(it).get().addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    it.result.toObject(WedoGroup::class.java)?.let { group->
+                                        var mGroups = _groups.value
+                                        if (mGroups == null) {
+                                            mGroups = mutableListOf(group)
+                                        }
+                                        mGroups.add(group)
+                                        _groups.value = mGroups ?: mutableListOf()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -71,14 +83,21 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
     }
 
     fun addWedo(text: String, gUid: String) {
-        getGroupByName(groupName)?.let {
-            it.wedos.toMutableList().add(Wedo(text))
-            Firebase.database.reference.apply {
-                child("groups").child(defaultUID).setValue(it)
-                PreferenceUtils.set(Constants.DEFAULT_UID, defaultUID)
+        db.collection(GROUPS).also { gc->
+            gc.document(gUid).get().addOnCompleteListener { task->
+                if (task.isSuccessful) {
+                    task.result.toObject(WedoGroup::class.java)?.let { group->
+                        val wedos = group.wedos.toMutableList().apply {
+                            add(Wedo(text))
+                        }
+                        group.wedos = wedos
+                        gc.document(gUid).set(group)
+                        _groups.value = _groups.value?.apply {
+                            toMutableList().add(group)
+                        }
+                    }
+                }
             }
-            //update
-            _groups.value = _groups.value?.toMutableList()
         }
     }
     /*fun writeWedo() {
