@@ -18,7 +18,7 @@ import com.hostd.wedo.util.PreferenceUtils
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
-    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData()
+    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData(mutableListOf())
     val groups: LiveData<MutableList<WedoGroup>> = _groups
 //    var groups = mutableStateListOf<WedoGroup>()
 //        private set
@@ -50,12 +50,10 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                             db.collection(GROUPS).document(it).get().addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     it.result.toObject(WedoGroup::class.java)?.let { group->
-                                        var mGroups = _groups.value
-                                        if (mGroups == null) {
-                                            mGroups = mutableListOf(group)
-                                        }
-                                        mGroups.add(group)
-                                        _groups.value = mGroups ?: mutableListOf()
+                                        val mGroups = _groups.value
+                                        mGroups?.add(group)
+                                        //refresh
+                                        _groups.value = mGroups?.toMutableList()
                                     }
                                 }
                             }
@@ -74,6 +72,10 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
             WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
+                val mGroups = _groups.value
+                mGroups?.add(group)
+                //refresh
+                _groups.value = mGroups?.toMutableList()
             }
         }
         //2. 유저 정보 만들기 TODO Email

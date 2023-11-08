@@ -54,18 +54,18 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val groups = viewModel.groups.observeAsState()
+            val groups  = viewModel.groups.observeAsState()
             Log.e("JDI", "groups: ${groups.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
                 TodoDialog(showDialog, addAction = { text->
-//                    mutableItems.add(it)
+
                     //TODO Group 셀렉션
-                    groups.value?.getOrNull(0)?.let { group->
+                    /*groups.value?.getOrNull(0)?.let { group->
                         viewModel.addWedo(text, group.groupId)
                     } ?: kotlin.run {
                         Log.w("group is null")
-                    }
+                    }*/
                 })
             }
             Scaffold(

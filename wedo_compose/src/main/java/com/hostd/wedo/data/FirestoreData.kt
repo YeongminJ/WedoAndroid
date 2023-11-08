@@ -19,11 +19,13 @@ data class WedoGroup(
 }
 
 data class Wedo(
-    var todo: String,
+    var todo: String = "",
     // uid + - + index? => 불필요해 보임 text 로 구분된다고 봄
 //    var id: String,
     var createDate: Long = System.currentTimeMillis()
-)
+) {
+    constructor(): this("")
+}
 
 data class User(
     var uid: String = "",
