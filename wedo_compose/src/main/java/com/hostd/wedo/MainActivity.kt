@@ -53,6 +53,11 @@ class MainActivity: ComponentActivity() {
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
+//        val repository = LocalRepositoryImpl()
+        viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
+
         setContent {
             val groups  = viewModel.groups.observeAsState()
             Log.e("JDI", "groups: ${groups.value?.size}")
@@ -96,9 +101,7 @@ class MainActivity: ComponentActivity() {
             }
         }
 
-        //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
-//        val repository = LocalRepositoryImpl()
-        viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
+
 
 //        viewModel.initWedo()
     }

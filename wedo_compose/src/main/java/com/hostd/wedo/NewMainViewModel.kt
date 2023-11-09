@@ -1,31 +1,23 @@
 package com.hostd.wedo
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
-import com.hostd.wedo.data.Constants.GROUPS
-import com.hostd.wedo.data.Constants.USERS
+import com.hostd.wedo.data.Constants
 import com.hostd.wedo.data.User
 import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.data.WedoGroup
-//import com.hostd.wedo.data.repository.LocalRepository
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.PreferenceUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-//TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
-class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
+class NewMainViewModel: ViewModel() {
 
-    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData(mutableListOf())
-    val groups: LiveData<MutableList<WedoGroup>> = _groups
+    val groups = MutableSharedFlow<List<WedoGroup>>()
 
+//    val groups = _groups
 
     // 기본 그룹 ID
     val defaultUID: String = PreferenceUtils.getDefaultUid()
@@ -39,7 +31,7 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
         //초기 저장된 정보가 아무것도 없을 때?
         Log.w("Init Wedo : $defaultUID")
         //1. uuid 정보로 내 그룹 목록 가져오기
-        db.collection(USERS).apply {
+        db.collection(Constants.USERS).apply {
             document(defaultUID).get().addOnCompleteListener { task->
                 if (task.isSuccessful) {
                     val user = task.result.toObject(User::class.java)
@@ -49,9 +41,11 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                     else {
                         //group 초기화
                         user.groups.forEach {
-                            db.collection(GROUPS).document(it).get().addOnCompleteListener {
+                            db.collection(Constants.GROUPS).document(it).get().addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     it.result.toObject(WedoGroup::class.java)?.let { group->
+                                        groups.collect
+                                        groups.emit()
                                         val mGroups = _groups.value
                                         mGroups?.add(group)
                                         //refresh
@@ -71,7 +65,7 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
         //create
         //1. group 먼저 만들기
         val groupUid = WedoGroup.getGeneratorGroup()
-        db.collection(GROUPS).also { gc->
+        db.collection(Constants.GROUPS).also { gc->
             WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
@@ -84,12 +78,12 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
         }
         //2. 유저 정보 만들기 TODO Email
         User(uid = defaultUID, groups = listOf(groupUid)).also {
-            db.collection(USERS).document(defaultUID).set(it)
+            db.collection(Constants.USERS).document(defaultUID).set(it)
         }
     }
 
     fun addWedo(text: String, gUid: String) {
-        db.collection(GROUPS).also { gc->
+        db.collection(Constants.GROUPS).also { gc->
             gc.document(gUid).get().addOnCompleteListener { task->
                 if (task.isSuccessful) {
                     task.result.toObject(WedoGroup::class.java)?.let { group->
