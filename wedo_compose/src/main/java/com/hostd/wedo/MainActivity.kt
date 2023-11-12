@@ -59,18 +59,14 @@ class MainActivity: ComponentActivity() {
         viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
 
         setContent {
-            val groups  = viewModel.groups.observeAsState()
-            Log.e("JDI", "groups: ${groups.value?.size}")
+            val groups = remember {
+                viewModel.groups
+            }
+            Log.e("JDI", "groups count : ${viewModel.groups.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
                 TodoDialog(showDialog, addAction = { text->
-
-                    //TODO Group 셀렉션
-                    /*groups.value?.getOrNull(0)?.let { group->
-                        viewModel.addWedo(text, group.groupId)
-                    } ?: kotlin.run {
-                        Log.w("group is null")
-                    }*/
+                    viewModel.addWedo(text, viewModel.groups.get(0).groupId)
                 })
             }
             Scaffold(
@@ -87,11 +83,14 @@ class MainActivity: ComponentActivity() {
 
                 LazyColumn(modifier = Modifier.padding(innerPadding)) {
                     // 0번째 그룹만 우선 처리
-                    groups.value?.let { groupItems ->
-                        Log.e("JDI", "groups222: ${groups.value?.size}")
-                        groupItems.getOrNull(0)?.let { wedos->
-                            items(wedos.wedos) {
-                                TodoItem(it, wedos)
+                    viewModel.groups.let { groupItems ->
+                        Log.e("JDI", "groups222: ${groupItems.size}")
+                        groupItems.getOrNull(0)?.let { group->
+                            Log.i("Wedos : ${group.wedos}")
+                            items(group.wedos, key = {
+                                it.todo
+                            }) {
+                                TodoItem(it, group)
                             }
                         }
                     }
@@ -114,7 +113,8 @@ fun TodoItem(wedo: Wedo, group: WedoGroup) {
     Card(
         Modifier
             .fillMaxWidth()
-            .border(width = 4.dp,
+            .border(
+                width = 4.dp,
                 color = Color.Black
             )) {
         Box(contentAlignment = Alignment.Center) {

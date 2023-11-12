@@ -1,6 +1,7 @@
 package com.hostd.wedo
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.hostd.wedo.data.Constants
@@ -12,6 +13,8 @@ import com.hostd.wedo.util.PreferenceUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 class NewMainViewModel: ViewModel() {
 
@@ -31,6 +34,7 @@ class NewMainViewModel: ViewModel() {
         //초기 저장된 정보가 아무것도 없을 때?
         Log.w("Init Wedo : $defaultUID")
         //1. uuid 정보로 내 그룹 목록 가져오기
+
         db.collection(Constants.USERS).apply {
             document(defaultUID).get().addOnCompleteListener { task->
                 if (task.isSuccessful) {
@@ -44,13 +48,9 @@ class NewMainViewModel: ViewModel() {
                             db.collection(Constants.GROUPS).document(it).get().addOnCompleteListener {
                                 if (it.isSuccessful) {
                                     it.result.toObject(WedoGroup::class.java)?.let { group->
-                                        groups.collect
-                                        groups.emit()
-                                        val mGroups = _groups.value
-                                        mGroups?.add(group)
-                                        //refresh
-                                        _groups.postValue(mGroups?.toMutableList())
-//                                        _groups.value = mGroups?.toMutableList()
+                                        viewModelScope.launch {
+                                            groups.emit(listOf(group))
+                                        }
                                     }
                                 }
                             }
@@ -69,10 +69,10 @@ class NewMainViewModel: ViewModel() {
             WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
-                val mGroups = _groups.value
-                mGroups?.add(group)
+//                val mGroups = _groups.value
+//                mGroups?.add(group)
                 //refresh
-                _groups.postValue(mGroups?.toMutableList())
+//                _groups.postValue(mGroups?.toMutableList())
 //                _groups.value = mGroups?.toMutableList()
             }
         }
@@ -81,25 +81,25 @@ class NewMainViewModel: ViewModel() {
             db.collection(Constants.USERS).document(defaultUID).set(it)
         }
     }
-
-    fun addWedo(text: String, gUid: String) {
-        db.collection(Constants.GROUPS).also { gc->
-            gc.document(gUid).get().addOnCompleteListener { task->
-                if (task.isSuccessful) {
-                    task.result.toObject(WedoGroup::class.java)?.let { group->
-                        val wedos = group.wedos.toMutableList().apply {
-                            add(Wedo(text))
-                        }
-                        group.wedos = wedos
-                        gc.document(gUid).set(group)
-                        _groups.value = _groups.value?.apply {
-                            toMutableList().add(group)
-                        }
-                    }
-                }
-            }
-        }
-    }
+//
+//    fun addWedo(text: String, gUid: String) {
+//        db.collection(Constants.GROUPS).also { gc->
+//            gc.document(gUid).get().addOnCompleteListener { task->
+//                if (task.isSuccessful) {
+//                    task.result.toObject(WedoGroup::class.java)?.let { group->
+//                        val wedos = group.wedos.toMutableList().apply {
+//                            add(Wedo(text))
+//                        }
+//                        group.wedos = wedos
+//                        gc.document(gUid).set(group)
+//                        _groups.value = _groups.value?.apply {
+//                            toMutableList().add(group)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     /*fun writeWedo() {
         Firebase.database.apply {
             val message = getReference("message")

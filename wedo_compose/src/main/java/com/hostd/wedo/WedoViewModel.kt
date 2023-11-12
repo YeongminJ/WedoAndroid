@@ -1,5 +1,9 @@
 package com.hostd.wedo
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,8 +27,10 @@ import kotlinx.coroutines.launch
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
-    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData(mutableListOf())
-    val groups: LiveData<MutableList<WedoGroup>> = _groups
+//    private val _groups: MutableLiveData<MutableList<WedoGroup>> = MutableLiveData(mutableListOf())
+//    var groups by mutableStateOf(listOf<WedoGroup>())
+    var groups = mutableStateListOf<WedoGroup>()
+        private set
 
 
     // 기본 그룹 ID
@@ -51,12 +57,12 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                         user.groups.forEach {
                             db.collection(GROUPS).document(it).get().addOnCompleteListener {
                                 if (it.isSuccessful) {
-                                    it.result.toObject(WedoGroup::class.java)?.let { group->
-                                        val mGroups = _groups.value
-                                        mGroups?.add(group)
-                                        //refresh
-                                        _groups.postValue(mGroups?.toMutableList())
-//                                        _groups.value = mGroups?.toMutableList()
+                                    it.result.toObject(WedoGroup::class.java)?.let { mGroup->
+                                        val newGroups = groups.toMutableList().apply {
+                                            add(mGroup)
+                                        }
+//                                        groups = newGroups
+                                        groups.add(mGroup)
                                     }
                                 }
                             }
@@ -75,11 +81,8 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
             WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
-                val mGroups = _groups.value
-                mGroups?.add(group)
-                //refresh
-                _groups.postValue(mGroups?.toMutableList())
-//                _groups.value = mGroups?.toMutableList()
+//                groups = groups.toMutableList().apply { add(group) }
+                groups.add(group)
             }
         }
         //2. 유저 정보 만들기 TODO Email
@@ -98,9 +101,13 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                         }
                         group.wedos = wedos
                         gc.document(gUid).set(group)
-                        _groups.value = _groups.value?.apply {
-                            toMutableList().add(group)
-                        }
+                        //TODO SElect Group
+                        groups.get(0).wedos = wedos
+                        Log.d("Wedos : ${groups.get(0).wedos}")
+                        groups = groups
+                        Log.d("now Maybe recomposition")
+//                        groups.get(0).
+//                        groups.add(group)
                     }
                 }
             }
