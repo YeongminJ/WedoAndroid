@@ -1,6 +1,7 @@
 package com.hostd.wedo
 
 //import com.hostd.wedo.data.repository.LocalRepository
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,11 @@ import com.hostd.wedo.util.PreferenceUtils
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
-    var currentGroupId: String = ""
+    val LAST_GROUP_ID = "last_group_id"
+
+    var currentGroupId: String = PreferenceUtils.get(LAST_GROUP_ID, "")
+
+    val origin: MutableLiveData<List<WedoGroup>> = MutableLiveData(listOf())
 
     private val _wedos: MutableLiveData<List<Wedo>> = MutableLiveData(listOf())
     val wedos: LiveData<List<Wedo>> = _wedos
@@ -70,6 +75,7 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                 gc.document(groupUid).set(group)
 //                groups.add(group)
                 currentGroupId = groupUid
+                PreferenceUtils.set(LAST_GROUP_ID, groupUid)
             }
         }
         //2. 유저 정보 만들기 TODO Email

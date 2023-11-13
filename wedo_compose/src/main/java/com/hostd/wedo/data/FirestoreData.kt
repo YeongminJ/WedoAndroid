@@ -23,6 +23,7 @@ data class Wedo(
     // uid + - + index? => 불필요해 보임 text 로 구분된다고 봄
 //    var id: String,
     var groupId: String = "", //그룹 아이디를 여기에 넣어서 Flow 처리할때, Wedo List 로만 관리하기 편하게
+    var starCount: Int = 0,
     var createDate: Long = System.currentTimeMillis()
 ) {
     constructor(): this("")
