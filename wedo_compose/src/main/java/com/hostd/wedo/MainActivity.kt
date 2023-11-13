@@ -40,15 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
 import com.hostd.wedo.data.Wedo
-import com.hostd.wedo.data.WedoGroup
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.WedoViewModelFactory
 
 class MainActivity: ComponentActivity() {
 
     lateinit var viewModel: WedoViewModel
-
-//    val mutableItems = remember { mutableStateListOf<String>() }
 
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,14 +56,12 @@ class MainActivity: ComponentActivity() {
         viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
 
         setContent {
-            val groups = remember {
-                viewModel.groups
-            }
-            Log.e("JDI", "groups count : ${viewModel.groups.size}")
+            val wedoListState = viewModel.wedos.observeAsState()
+            Log.e("JDI", "wedo count : ${wedoListState.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
                 TodoDialog(showDialog, addAction = { text->
-                    viewModel.addWedo(text, viewModel.groups.get(0).groupId)
+                    viewModel.addWedo(text)
                 })
             }
             Scaffold(
@@ -83,19 +78,11 @@ class MainActivity: ComponentActivity() {
 
                 LazyColumn(modifier = Modifier.padding(innerPadding)) {
                     // 0번째 그룹만 우선 처리
-                    viewModel.groups.let { groupItems ->
-                        Log.e("JDI", "groups222: ${groupItems.size}")
-                        groupItems.getOrNull(0)?.let { group->
-                            Log.i("Wedos : ${group.wedos}")
-                            items(group.wedos, key = {
-                                it.todo
-                            }) {
-                                TodoItem(it, group)
-                            }
+                    wedoListState.value?.let { wedos->
+                        items(wedos) {
+                            TodoItem(it)
                         }
                     }
-
-                    /* ... */
                 }
             }
         }
@@ -109,7 +96,7 @@ class MainActivity: ComponentActivity() {
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun TodoItem(wedo: Wedo, group: WedoGroup) {
+fun TodoItem(wedo: Wedo) {
     Card(
         Modifier
             .fillMaxWidth()
@@ -123,10 +110,10 @@ fun TodoItem(wedo: Wedo, group: WedoGroup) {
                 modifier = Modifier.padding(10.dp),
                 fontSize = 30.sp,
             )
-            Text(
-                group.groupname,
-                color = Color.Red
-            )
+//            Text(
+//                group.groupname,
+//                color = Color.Red
+//            )
         }
     }
 }
