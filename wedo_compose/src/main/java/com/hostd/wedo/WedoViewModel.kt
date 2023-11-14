@@ -2,9 +2,13 @@ package com.hostd.wedo
 
 //import com.hostd.wedo.data.repository.LocalRepository
 import android.content.SharedPreferences
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.hostd.wedo.data.Constants.GROUPS
@@ -14,9 +18,16 @@ import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.data.WedoGroup
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.PreferenceUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
 class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
+
+    //TODO 구조의 수정이 필요함. 처음에 불러올때, User 에 대한 정보를 로컬에 저장해야하고,
+    // Wedo 그릴때 저장된 정보를 토대로 바로 그릴수 있게 해야함. 그래야 동적으로 데이터 호출이 없어짐.
+    
 
     val LAST_GROUP_ID = "last_group_id"
 
@@ -26,6 +37,9 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
 
     private val _wedos: MutableLiveData<List<Wedo>> = MutableLiveData(listOf())
     val wedos: LiveData<List<Wedo>> = _wedos
+
+    private val _loadState:MutableState<Boolean> = mutableStateOf(false)
+    val loadState: State<Boolean> = _loadState
 
     // 기본 그룹 ID
     val defaultUID: String = PreferenceUtils.getDefaultUid()
@@ -104,6 +118,24 @@ class WedoViewModel(/*val repository: LocalRepository*/): ViewModel() {
                 }
             }
         }
+    }
+
+    suspend fun groupUsers(wedo: Wedo): List<User> {
+        val users = mutableListOf<User>()
+        withContext(Dispatchers.IO) {
+            db.collection(GROUPS).document(wedo.groupId).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    it.result.toObject(WedoGroup::class.java)?.let { group ->
+                        group.member.forEach {
+                            db.collection(USERS).document(it).get().addOnCompleteListener {
+                                it.result.toObject(User::class.java)?.let { user -> users.add(user) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return users
     }
     /*fun writeWedo() {
         Firebase.database.apply {
