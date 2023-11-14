@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
+import com.hostd.wedo.components.ProgressDialogUI
+import com.hostd.wedo.components.SimpleProgressDialog
 import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.WedoViewModelFactory
@@ -56,6 +58,11 @@ class MainActivity: ComponentActivity() {
         viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
 
         setContent {
+            //TODO 다이얼로그 State 처리
+            SimpleProgressDialog(Modifier.padding(0.dp), "Working", onDismissRequest = {
+                //TODO 여기서 다이얼로그 State 변경
+                Log.i("Touch Outside")
+            })
             val wedoListState = viewModel.wedos.observeAsState()
             Log.e("JDI", "wedo count : ${wedoListState.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
