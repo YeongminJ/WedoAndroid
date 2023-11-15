@@ -105,7 +105,7 @@ class MainActivity: ComponentActivity() {
 
 
 @OptIn(ExperimentalUnitApi::class)
-@Preview
+
 @Composable
 fun TodoItem(wedo: Wedo, viewModel: WedoViewModel) {
     Card(
@@ -118,9 +118,9 @@ fun TodoItem(wedo: Wedo, viewModel: WedoViewModel) {
         Row(Modifier.padding(16.dp)) {
             Text(text = wedo.todo, fontSize = 18.sp)
 
-            viewModel.groupUsers()
-            viewModel.groupUsers(wedo)
-            Text(text = )
+//            viewModel.groupUsers()
+//            viewModel.groupUsers(wedo)
+//            Text(text = )
         }
 //        Box(contentAlignment = Alignment.Center) {
 //            Text(

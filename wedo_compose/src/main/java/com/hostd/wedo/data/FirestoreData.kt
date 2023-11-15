@@ -32,6 +32,7 @@ data class Wedo(
 data class User(
     var uid: String = "",
     var email: String = "",
+    var thumbnail: String = "",
     var groups: List<String> = emptyList()
 ) {
     constructor(): this("")
