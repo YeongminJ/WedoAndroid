@@ -16,6 +16,7 @@ import com.hostd.wedo.data.Constants.GROUPS
 import com.hostd.wedo.data.Constants.USERS
 import com.hostd.wedo.data.LocalGroup
 import com.hostd.wedo.data.LocalUser
+import com.hostd.wedo.data.LocalWedo
 import com.hostd.wedo.data.User
 import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.data.WedoGroup
@@ -50,6 +51,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
     //TODO LocalRepository 로 db 로 저장, FireStore 갱신시에는 local 도 갱신되게
     val localUsers = mutableListOf<LocalUser>()
     val localGroups = mutableListOf<LocalGroup>()
+    val localWedo = mutableListOf<LocalWedo>()
 
     val db = Firebase.firestore
     init {
@@ -96,7 +98,13 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                             list.result.forEach {
                                 (it.result as DocumentSnapshot).toObject(WedoGroup::class.java)?.let { mGroup->
                                     Log.d("Group : $mGroup")
-                                    localGroups.add(LocalGroup(mGroup.groupId, mGroup.groupname))
+                                    val localGroup = LocalGroup(mGroup.groupId, mGroup.groupname)
+                                    localGroups.add(localGroup)
+                                    mGroup.wedos.forEach { wedo->
+                                        //TODO Member는 userTask 완료시에 넣기 or View 그릴때?
+                                        localWedo.add(LocalWedo(todo = wedo.todo, localGroup = localGroup, starCount = wedo.starCount, createDate = wedo.createDate))
+                                    }
+
 
                                     //유저 테스크 시작
                                     mGroup.member.forEach {
@@ -115,6 +123,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                                         localUsers.add(LocalUser(user.uid, user.email, user.thumbnail))
                                     }
                                 }
+
                             }
                         }
 
@@ -137,6 +146,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
 //                groups.add(group)
                 currentGroupId = groupUid
                 PreferenceUtils.set(LAST_GROUP_ID, groupUid)
+                localGroups
             }
         }
         //2. 유저 정보 만들기 TODO Email

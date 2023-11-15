@@ -14,3 +14,11 @@ data class LocalUser(
     var email: String = "",
     var thumbnail: String = ""
 )
+
+//data class LocalWedo(
+//    var todo: String = "",
+//    var localGroup: LocalGroup,
+//    var starCount: Int = 0,
+//    var createDate: Long = System.currentTimeMillis(),
+//    var members: List<String> = mutableListOf()
+//)
