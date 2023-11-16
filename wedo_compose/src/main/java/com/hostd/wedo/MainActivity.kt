@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
 import com.hostd.wedo.components.SimpleProgressDialog
+import com.hostd.wedo.data.LocalWedo
 import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.WedoViewModelFactory
@@ -62,7 +63,7 @@ class MainActivity: ComponentActivity() {
                     Log.i("Touch Outside")
                 })
             }
-            val wedoListState = viewModel.wedos.observeAsState()
+            val wedoListState = viewModel._localWedos.observeAsState()
             Log.e("JDI", "wedo count : ${wedoListState.value?.size}")
             val showDialog = remember { mutableStateOf(false) }
             if (showDialog.value) {
@@ -107,7 +108,8 @@ class MainActivity: ComponentActivity() {
 @OptIn(ExperimentalUnitApi::class)
 
 @Composable
-fun TodoItem(wedo: Wedo, viewModel: WedoViewModel) {
+fun TodoItem(wedo: LocalWedo, viewModel: WedoViewModel) {
+    Log.e("TodoItem : $wedo, ${wedo.members}, ${wedo.localGroup.groupId}")
     Card(
         Modifier
             .fillMaxWidth()

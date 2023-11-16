@@ -6,19 +6,23 @@ val NONE: Int = -1
 data class LocalGroup(
     var groupId: String = "",
     var groupName: String = "",
-    var groupColor: Int = NONE // 자신한테 보여질 그룹에 칼러 ( 현재 구분이 어렵기 때문에 생각 )
+    var groupColor: Int = NONE, // 자신한테 보여질 그룹에 칼러 ( 현재 구분이 어렵기 때문에 생각 )
+    var member: List<String> = emptyList(),
+    var wedos: List<Wedo> = listOf()
 )
 
+// 유저한정 정보
 data class LocalUser(
     var uid: String = "",
     var email: String = "",
     var thumbnail: String = ""
 )
 
-//data class LocalWedo(
-//    var todo: String = "",
-//    var localGroup: LocalGroup,
-//    var starCount: Int = 0,
-//    var createDate: Long = System.currentTimeMillis(),
-//    var members: List<String> = mutableListOf()
-//)
+data class LocalWedo(
+    var todo: String = "",
+    var localGroup: LocalGroup,
+    var starCount: Int = 0,
+    var createDate: Long = System.currentTimeMillis(),
+    //Key: memberId, value User
+    var members: List<LocalUser> = listOf()
+)

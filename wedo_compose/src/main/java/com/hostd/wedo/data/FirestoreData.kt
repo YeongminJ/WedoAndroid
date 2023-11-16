@@ -29,6 +29,7 @@ data class Wedo(
     constructor(): this("")
 }
 
+//유저가 가입된 그룹정보를 가지고 있는 유저정보
 data class User(
     var uid: String = "",
     var email: String = "",

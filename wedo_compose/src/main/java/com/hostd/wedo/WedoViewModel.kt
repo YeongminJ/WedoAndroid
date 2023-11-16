@@ -45,13 +45,15 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
     private val _loadState:MutableState<Boolean> = mutableStateOf(false)
     val loadState: State<Boolean> = _loadState
 
+    val _localWedos: MutableLiveData<List<LocalWedo>> = MutableLiveData(listOf())
+
     // 기본 그룹 ID
     val defaultUID: String = PreferenceUtils.getDefaultUid()
 
     //TODO LocalRepository 로 db 로 저장, FireStore 갱신시에는 local 도 갱신되게
-    val localUsers = mutableListOf<LocalUser>()
+    val localUsers = hashMapOf<String, LocalUser>()
     val localGroups = mutableListOf<LocalGroup>()
-    val localWedo = mutableListOf<LocalWedo>()
+//    val localWedo = mutableListOf<LocalWedo>()
 
     val db = Firebase.firestore
     init {
@@ -98,19 +100,21 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                             list.result.forEach {
                                 (it.result as DocumentSnapshot).toObject(WedoGroup::class.java)?.let { mGroup->
                                     Log.d("Group : $mGroup")
-                                    val localGroup = LocalGroup(mGroup.groupId, mGroup.groupname)
+                                    val localGroup = LocalGroup(mGroup.groupId, mGroup.groupname, member = mGroup.member, wedos = mGroup.wedos)
                                     localGroups.add(localGroup)
-                                    mGroup.wedos.forEach { wedo->
-                                        //TODO Member는 userTask 완료시에 넣기 or View 그릴때?
-                                        localWedo.add(LocalWedo(todo = wedo.todo, localGroup = localGroup, starCount = wedo.starCount, createDate = wedo.createDate))
-                                    }
+//                                    _wedos.value = mGroup.wedos
+
+//                                    mGroup.wedos.forEach { wedo->
+//                                        //TODO Member는 userTask 완료시에 넣기 or View 그릴때?
+//
+////                                        localWedo.add(LocalWedo(todo = wedo.todo, localGroup = localGroup, starCount = wedo.starCount, createDate = wedo.createDate))
+//                                    }
 
 
                                     //유저 테스크 시작
                                     mGroup.member.forEach {
                                         userTasks.add(db.collection(USERS).document(it).get())
                                     }
-
                                 }
                             }
 
@@ -120,10 +124,11 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                                 list.result.forEach {
                                     (it.result as DocumentSnapshot).toObject(User::class.java)?.let { user->
                                         Log.d("User : $user")
-                                        localUsers.add(LocalUser(user.uid, user.email, user.thumbnail))
+                                        localUsers[user.uid] = LocalUser(user.uid, user.email, user.thumbnail)
                                     }
                                 }
-
+                                //user 까지 받아오기 끝남 LocalWedo Make
+                                makeLocalWedo()
                             }
                         }
 
@@ -133,6 +138,23 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun makeLocalWedo() {
+        val localWedos = mutableListOf<LocalWedo>()
+        localGroups.forEach { localGroup ->
+            val memberUsers = mutableListOf<LocalUser>()
+            localGroup.member.forEach { memberId->
+                localUsers[memberId]?.let { memberUsers.add(it) }
+            }
+            localGroup.wedos.forEach { wedo->
+                Log.d("LocalWedo : ${wedo.todo}")
+                localWedos.add(LocalWedo(wedo.todo, localGroup, wedo.starCount, wedo.createDate, memberUsers))
+            }
+        }
+        Log.w("LocalWedo Count : ${localWedos.size}")
+        //recomposition
+        _localWedos.value = localWedos
     }
 
     fun firstInitWedo() {
