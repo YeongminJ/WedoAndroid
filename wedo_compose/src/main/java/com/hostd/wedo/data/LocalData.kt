@@ -7,7 +7,7 @@ data class LocalGroup(
     var groupId: String = "",
     var groupName: String = "",
     var groupColor: Int = NONE, // 자신한테 보여질 그룹에 칼러 ( 현재 구분이 어렵기 때문에 생각 )
-    var member: List<String> = emptyList(),
+    var members: List<String> = emptyList(),
     var wedos: List<Wedo> = listOf()
 )
 

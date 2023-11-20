@@ -51,8 +51,10 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
     val defaultUID: String = PreferenceUtils.getDefaultUid()
 
     //TODO LocalRepository 로 db 로 저장, FireStore 갱신시에는 local 도 갱신되게
+    //Key UID, Value User
     val localUsers = hashMapOf<String, LocalUser>()
-    val localGroups = mutableListOf<LocalGroup>()
+//    val localGroups = mutableListOf<LocalGroup>()
+    val localGroups = hashMapOf<String, LocalGroup>()
 //    val localWedo = mutableListOf<LocalWedo>()
 
     val db = Firebase.firestore
@@ -100,8 +102,8 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
                             list.result.forEach {
                                 (it.result as DocumentSnapshot).toObject(WedoGroup::class.java)?.let { mGroup->
                                     Log.d("Group : $mGroup")
-                                    val localGroup = LocalGroup(mGroup.groupId, mGroup.groupname, member = mGroup.member, wedos = mGroup.wedos)
-                                    localGroups.add(localGroup)
+                                    val localGroup = LocalGroup(mGroup.groupId, mGroup.groupname, members = mGroup.members, wedos = mGroup.wedos)
+                                    localGroups.put(mGroup.groupId, localGroup)
 //                                    _wedos.value = mGroup.wedos
 
 //                                    mGroup.wedos.forEach { wedo->
@@ -112,7 +114,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
 
 
                                     //유저 테스크 시작
-                                    mGroup.member.forEach {
+                                    mGroup.members.forEach {
                                         userTasks.add(db.collection(USERS).document(it).get())
                                     }
                                 }
@@ -142,14 +144,16 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
 
     private fun makeLocalWedo() {
         val localWedos = mutableListOf<LocalWedo>()
-        localGroups.forEach { localGroup ->
+        localGroups.forEach { map ->
+
             val memberUsers = mutableListOf<LocalUser>()
-            localGroup.member.forEach { memberId->
+            map.value.members.forEach { memberId->
+                //멤버 아이디 기준으로 LocalUser 를 찾은 다음에 LocalUser 를 추가
                 localUsers[memberId]?.let { memberUsers.add(it) }
             }
-            localGroup.wedos.forEach { wedo->
+            map.value.wedos.forEach { wedo->
                 Log.d("LocalWedo : ${wedo.todo}")
-                localWedos.add(LocalWedo(wedo.todo, localGroup, wedo.starCount, wedo.createDate, memberUsers))
+                localWedos.add(LocalWedo(wedo.todo, map.value, wedo.starCount, wedo.createDate, memberUsers))
             }
         }
         Log.w("LocalWedo Count : ${localWedos.size}")
@@ -162,7 +166,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
         //1. group 먼저 만들기
         val groupUid = WedoGroup.getGeneratorGroup()
         db.collection(GROUPS).also { gc->
-            WedoGroup(groupUid, member = listOf(defaultUID)).also { group->
+            WedoGroup(groupUid, members = listOf(defaultUID)).also { group->
                 //만들어진 그룹 저장
                 gc.document(groupUid).set(group)
 //                groups.add(group)
@@ -178,19 +182,35 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
     }
 
     fun addWedo(text: String, gUid: String = currentGroupId) {
+        val newWedo = Wedo(todo = text, groupId = gUid)
         db.collection(GROUPS).also { gc->
             gc.document(gUid).get().addOnCompleteListener { task->
+
                 if (task.isSuccessful) {
                     task.result.toObject(WedoGroup::class.java)?.let { group->
-                        val newWedo = Wedo(todo = text, groupId = gUid)
+                        //add to firestore
                         val wedos = group.wedos.toMutableList().apply {
                             add(newWedo)
                         }
                         group.wedos = wedos
                         gc.document(gUid).set(group)
 
-                        _wedos.value = _wedos.value?.toMutableList()?.apply {
-                            add(newWedo)
+                        //Deprecated old wedo
+//                        _wedos.value = _wedos.value?.toMutableList()?.apply {
+//                            add(newWedo)
+//                        }
+
+                        //add to local
+                        Log.w("Add Local Wedo")
+                        localGroups[gUid]?.let { localGroup ->
+                            val memberUsers = mutableListOf<LocalUser>()
+                            localGroup.members.forEach {
+                                localUsers[it]?.let { user-> memberUsers.add(user) }
+                            }
+                            val newLocalWedo = LocalWedo(newWedo.todo, localGroup, newWedo.starCount, newWedo.createDate, memberUsers)
+                            _localWedos.value = _localWedos.value?.toMutableList()?.apply {
+                                add(newLocalWedo)
+                            }
                         }
                         Log.d("now Maybe recomposition")
                     }
@@ -205,7 +225,7 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
             db.collection(GROUPS).document(wedo.groupId).get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     it.result.toObject(WedoGroup::class.java)?.let { group ->
-                        group.member.forEach {
+                        group.members.forEach {
                             db.collection(USERS).document(it).get().addOnCompleteListener {
                                 it.result.toObject(User::class.java)?.let { user -> users.add(user) }
                             }

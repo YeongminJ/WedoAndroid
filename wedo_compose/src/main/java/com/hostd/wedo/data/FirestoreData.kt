@@ -5,7 +5,7 @@ import com.hostd.wedo.util.Utils
 
 data class WedoGroup(
     var groupId: String = "",
-    var member: List<String> = emptyList(),
+    var members: List<String> = emptyList(),
     var wedos: List<Wedo> = emptyList(),
     var groupname: String = "",
 ) {
