@@ -1,4 +1,4 @@
-package com.hostd.wedo
+package com.hostd.wedo.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModelProvider
+import com.hostd.wedo.WedoViewModel
 import com.hostd.wedo.components.SimpleProgressDialog
 import com.hostd.wedo.data.LocalWedo
-import com.hostd.wedo.data.Wedo
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.WedoViewModelFactory
 
@@ -72,7 +72,7 @@ class MainActivity: ComponentActivity() {
                 })
             }
             Scaffold(
-                bottomBar = {MainScreen()},
+                bottomBar = { MainScreen() },
                 floatingActionButton = {
                     FloatingActionButton(onClick = {
                         showDialog.value = true
