@@ -86,6 +86,7 @@ dependencies {
     def preference_version = "1.2.0"
     implementation "androidx.preference:preference-ktx:$preference_version"
 
+    implementation "androidx.core:core-splashscreen:1.0.1"
 //    def room_version = "2.5.0"
 //    implementation "androidx.room:room-runtime:$room_version"
 //    annotationProcessor "androidx.room:room-compiler:$room_version"

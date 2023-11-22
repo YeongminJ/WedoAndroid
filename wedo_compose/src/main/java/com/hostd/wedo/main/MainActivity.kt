@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import com.hostd.wedo.WedoViewModel
 import com.hostd.wedo.components.SimpleProgressDialog
@@ -50,6 +51,14 @@ class MainActivity: ComponentActivity() {
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //TODO Activity 내에 스플래시 넣을지, SplashActivity 넣을지 고민...... 아래는 Activity 내에 넣는 방식
+        // setKeepOnScreenCondition 내 값이 true 이면 스플래시 보인다.
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.splashLoading.value
+            }
+        }
 
         //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
 //        val repository = LocalRepositoryImpl()

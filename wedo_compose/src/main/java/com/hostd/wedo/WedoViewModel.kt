@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,6 +25,8 @@ import com.hostd.wedo.data.repository.StoreRepository
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.PreferenceUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 //TODO Data 레이어에 맞게 수정 Repository, Datasource, Entity
@@ -45,6 +48,8 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
     private val _loadState:MutableState<Boolean> = mutableStateOf(false)
     val loadState: State<Boolean> = _loadState
 
+    val splashLoading: MutableState<Boolean> = mutableStateOf(true)
+
     val _localWedos: MutableLiveData<List<LocalWedo>> = MutableLiveData(listOf())
 
     // 기본 그룹 ID
@@ -59,6 +64,10 @@ class WedoViewModel(val repository: StoreRepository) : ViewModel() {
 
     val db = Firebase.firestore
     init {
+        viewModelScope.launch {
+            delay(1000)
+            splashLoading.value = false
+        }
         initWedo()
     }
 
