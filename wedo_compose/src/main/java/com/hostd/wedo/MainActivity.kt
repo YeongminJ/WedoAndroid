@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -15,14 +13,11 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,15 +26,8 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.hostd.wedo.components.SimpleProgressDialog
 import com.hostd.wedo.data.Constants
 import com.hostd.wedo.data.LocalWedo
-import com.hostd.wedo.ui.IntroScreen
-import com.hostd.wedo.ui.TodoDialog
 import com.hostd.wedo.util.Log
 import com.hostd.wedo.util.PreferenceUtils
 import com.hostd.wedo.util.WedoViewModelFactory
@@ -80,7 +68,7 @@ fun TodoItem(wedo: LocalWedo, viewModel: WedoViewModel) {
             .padding(top = 16.dp, start = 8.dp, end = 8.dp),
         shape = RoundedCornerShape(16.dp),
 
-    ) {
+        ) {
         Row(Modifier.padding(16.dp)) {
             Text(text = wedo.todo, fontSize = 18.sp)
 
