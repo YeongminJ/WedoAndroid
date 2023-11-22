@@ -25,9 +25,23 @@ object PreferenceUtils {
         return defaultValue
     }
 
+    fun get(key: String, defaultValue: Boolean): Boolean {
+        WedoApplication.instance.appContext.let { context->
+            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue) ?: defaultValue
+        }
+
+        return defaultValue
+    }
+
     fun set(key: String, str: String) {
         WedoApplication.instance.appContext.let { context->
             return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(key, str).apply()
+        }
+    }
+
+    fun set(key: String, bool: Boolean) {
+        WedoApplication.instance.appContext.let { context->
+            return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(key, bool).apply()
         }
     }
 
