@@ -1,6 +1,10 @@
 package com.hostd.wedo
 
+import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Row
@@ -43,6 +47,8 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //잠금화면에서 동작 처리
+        setTurnScreenOnLock()
         //TODO Hilt 적용시 대체, 임시 Provider 로 이용중
 //        val repository = LocalRepositoryImpl()
         viewModel = ViewModelProvider(this, WedoViewModelFactory())[WedoViewModel::class.java]
@@ -101,6 +107,27 @@ fun BottomNavigationScreen() {
                 selected = index == selectedIndex.value,
                 onClick = { selectedIndex.value = index }
             )
+        }
+    }
+}
+
+fun Activity.setTurnScreenOnLock() {
+    val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager?
+    when {
+        android.os.Build.VERSION.SDK_INT >= 27 -> {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+            keyguardManager?.requestDismissKeyguard(this, null)
+        }
+        android.os.Build.VERSION.SDK_INT == 26 -> {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+            keyguardManager?.requestDismissKeyguard(this, null)
+        }
+        else -> {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
         }
     }
 }
