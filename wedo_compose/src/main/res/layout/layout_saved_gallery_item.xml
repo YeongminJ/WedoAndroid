@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.hostd.wedo.gallery.SelectedPhoto" />
+
+        <variable
+            name="vm"
+            type="com.hostd.wedo.gallery.GalleryViewModel" />
+    </data>
+
+    <!--android:background="@{data.album ? @drawable/bg_album : @android:color/transparent}"-->
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:onClick="@{()->vm.removeItem(data)}">
+
+        <ImageView
+            android:layout_width="@dimen/size_gallery_shortcut_image"
+            android:layout_height="@dimen/size_gallery_shortcut_image"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:scaleType="fitXY"
+            app:bindImageUrl="@{data.url}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

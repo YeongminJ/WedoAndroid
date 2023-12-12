@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="data"
+            type="String" />
+
+        <variable
+            name="vm"
+            type="com.hostd.wedo.gallery.GalleryViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{()->vm.onClickItem(data)}"
+        android:padding="2dp"
+        app:bindSelection="@{data}"
+        app:bindViewModel="@{vm}">
+
+        <ImageView
+            android:id="@+id/img_photo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:bindImageNoRoundUrl="@{data}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selector_bg_rect_photo"
+            app:layout_constraintBottom_toBottomOf="@id/img_photo"
+            app:layout_constraintEnd_toEndOf="@id/img_photo"
+            app:layout_constraintStart_toStartOf="@id/img_photo"
+            app:layout_constraintTop_toTopOf="@id/img_photo" />
+
+        <ImageView
+            android:id="@+id/item_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:paddingStart="20dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="20dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_radio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->vm.clickExpand(data)}"
+            android:paddingStart="12dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp"
+            android:src="@drawable/ic_expand"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

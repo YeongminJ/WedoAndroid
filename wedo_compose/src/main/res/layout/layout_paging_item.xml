@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.hostd.wedo.gallery.PagingViewModel.PagingItem" />
+
+        <variable
+            name="vm"
+            type="com.hostd.wedo.gallery.PagingViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#f00">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->vm.onBackClick()}"
+            android:padding="12dp"
+            android:src="@drawable/selector_btn_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="#ffd700"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@id/img_radio"
+            app:layout_constraintEnd_toStartOf="@id/img_radio"
+            app:layout_constraintTop_toTopOf="@id/img_radio"
+            android:text="@{String.valueOf(data.selectCount)}" />
+
+        <ImageView
+            android:id="@+id/img_radio"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            android:onClick="@{()->vm.onRadioClick(data)}"
+            android:padding="10dp"
+            android:src="@drawable/selector_radio"
+            app:bindImageRadio="@{data.checked}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/black"
+            app:bindImageUrl="@{data.url}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_radio" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

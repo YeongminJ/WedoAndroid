@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_gallery_shortcut">80dp</dimen>
+    <dimen name="size_gallery_shortcut_image">68dp</dimen>
+    <dimen name="size_gallery_saved_image">96dp</dimen>
+    <dimen name="photo_card_radius">12dp</dimen>
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eeeeee"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/field_fragment"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:src="@drawable/selector_vector_close"
+            app:layout_constraintBottom_toTopOf="@id/field_fragment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/spinner_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:dropDownWidth="wrap_content"
+            android:dropDownVerticalOffset="40dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintBottom_toBottomOf="@id/btn_close"
+            app:layout_constraintStart_toEndOf="@id/btn_close"
+            app:layout_constraintTop_toTopOf="@id/btn_close"
+            tools:text="Hello world" />
+
+        <TextView
+            android:id="@+id/text_sel_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textColor="#2196F3"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/btn_complete"
+            app:layout_constraintEnd_toStartOf="@id/btn_complete"
+            app:layout_constraintTop_toTopOf="@id/btn_complete"
+            tools:text="20"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/btn_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="완료"
+            android:textColor="@color/selector_color_txt_menu"
+            android:textSize="18dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/field_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/field_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:descendantFocusability="blocksDescendants"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_close" />
+
+        <FrameLayout
+            android:id="@+id/field_shortcuts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btn_close">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_shortcuts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_saved_gallery_item" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="#cdcdcd" />
+        </FrameLayout>
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/loading_progress_bar"
+            style="?android:progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#1E88E5"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
