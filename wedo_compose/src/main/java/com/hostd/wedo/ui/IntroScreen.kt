@@ -1,5 +1,6 @@
 package com.hostd.wedo.ui
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -34,6 +35,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.hostd.wedo.MainActivity
 import com.hostd.wedo.data.Constants
+import com.hostd.wedo.gallery.GalleryPickerActivity
 import com.hostd.wedo.util.PreferenceUtils
 import com.skydoves.orchestra.colorpicker.AlphaSlideBar
 import com.skydoves.orchestra.colorpicker.BrightnessSlideBar
@@ -104,18 +106,21 @@ fun PhotoPickerDemoScreen() {
         photoUri = uris[0]
     }
 
+    val context = LocalContext.current
 
     Column {
         Button(
             onClick = {
+                context.startActivity(Intent(context, GalleryPickerActivity::class.java))
                 //On button press, launch the photo picker
-                launcher.launch(
-                    PickVisualMediaRequest(
-                    //Here we request only photos. Change this to .ImageAndVideo if you want videos too.
-                    //Or use .VideoOnly if you only want videos.
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-                )
+
+//                launcher.launch(
+//                    PickVisualMediaRequest(
+//                    //Here we request only photos. Change this to .ImageAndVideo if you want videos too.
+//                    //Or use .VideoOnly if you only want videos.
+//                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+//                    )
+//                )
             }
         ) {
             Text("Select Photo")

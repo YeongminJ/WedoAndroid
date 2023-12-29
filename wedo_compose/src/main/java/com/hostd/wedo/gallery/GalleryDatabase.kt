@@ -20,7 +20,7 @@ abstract class GalleryDatabase: RoomDatabase() {
                     instance = Room.databaseBuilder(
                         WedoApplication.instance.appContext,
                         GalleryDatabase::class.java,
-                        "weather-bg.db"
+                        "wedo-bg.db"
                     )
 //                        .addMigrations(migration_1_2, migration_2_3)  //TODO Migration
                         .build()
