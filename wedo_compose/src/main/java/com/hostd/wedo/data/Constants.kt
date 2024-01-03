@@ -9,4 +9,5 @@ object Constants {
     val DEFAULT_UID = "default_uid"
     val DATABASE_NAME = "wedo_local.db"
     val TUTORIAL_COMPLETE = "tutorial_complete"
+
 }

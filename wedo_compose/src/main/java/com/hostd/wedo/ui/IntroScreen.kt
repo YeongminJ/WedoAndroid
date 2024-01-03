@@ -56,8 +56,10 @@ fun IntroScreen(navController: NavHostController = rememberNavController()) {
     Column {
         Text(
             modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center),
-            text = "안녕하세요 Wedo 입니다. 먼저 메인 배경 색상을 골라볼까요?"
+            text = "안녕하세요.\nWedo는 우리의 할 일을 함께 해결 하고자 만들어졌어요."
         )
+
+        TextBox()
 
         val colorList = listOf(
             Color(45, 197, 128),
@@ -129,7 +131,7 @@ fun RadioShape(color: Color, isSelected: Boolean, clickListener: () -> Unit) {
         Box(modifier = Modifier.fillMaxWidth().padding(4.dp).aspectRatio(1f).clip(CircleShape).background(color).clickable {
             clickListener.invoke()
         }) {
-            Icon(Icons.Default.Check, modifier = Modifier.fillMaxSize(), contentDescription = "Check", tint = Color.White)
+            Icon(Icons.Default.Check, modifier = Modifier.fillMaxSize(.5f), contentDescription = "Check", tint = Color.White)
         }
     } else {
         Box(modifier = Modifier.fillMaxWidth().padding(4.dp).aspectRatio(1f).clip(CircleShape).background(color).clickable {
